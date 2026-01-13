@@ -1,0 +1,8 @@
+FINAL CSL -> TEXT RESULTS
+========================
+
+BLEU: 7.02
+chrF: 26.34
+WER: 0.991
+Sentence Accuracy: 1.25
+METEOR: 0.167

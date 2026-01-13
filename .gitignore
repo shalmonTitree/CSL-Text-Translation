@@ -1,0 +1,23 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+bottleneck_env/
+venv/
+
+# Data and features
+data/
+*.npy
+
+# Model checkpoints
+checkpoints/
+*.pt
+
+# Logs and outputs
+results_*.csv
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db

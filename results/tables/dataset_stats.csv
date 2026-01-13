@@ -1,0 +1,4 @@
+split,num_samples,avg_frames,max_frames
+train,7096,39.195603156708,159
+dev,519,36.15799614643545,91
+test,642,33.88473520249221,81
