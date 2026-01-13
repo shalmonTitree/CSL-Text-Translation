@@ -46,8 +46,9 @@ The pipeline consists of **seven clearly defined stages**, from raw video input 
 
 ## 📁 Project Structure
 
-```
+## 📁 Project Structure
 
+```text
 csltCode/
 │
 ├── src/                     # Core model components
@@ -70,8 +71,8 @@ csltCode/
 ├── checkpoints/             # Saved model checkpoints
 ├── results/                 # Predictions, metrics, visualisations
 └── README.md
-
 ```
+
 
 ---
 
