@@ -1,61 +1,77 @@
+Sure 👍
+Below is the **complete README.md file only**, clean and properly formatted.
+You can **copy-paste this entire content directly into `README.md`** — nothing extra, no explanation.
+
+---
+
+```markdown
 # Gloss-Free Continuous Sign Language to Text Translation
 
-This repository implements an **end-to-end deep learning pipeline for translating continuous sign language videos directly into natural language text**, without relying on intermediate gloss annotations. The system is designed as part of an academic Master’s Thesis and focuses on robustness, temporal modelling, and semantic compression.
+This repository implements an **end-to-end deep learning pipeline for translating continuous sign language videos directly into natural language text**, without relying on intermediate gloss annotations.
+
+The system is developed as part of an academic **Master’s Thesis** and focuses on robustness, temporal modelling, and semantic compression.
 
 ---
 
 ## 🔍 Overview
 
-Continuous Sign Language Translation (CSLT) is a challenging problem due to long temporal dependencies, co-articulation effects, and lack of explicit word boundaries. This project addresses these challenges by:
+Continuous Sign Language Translation (CSLT) is challenging due to:
 
-- Extracting pose–motion features from video frames
-- Modelling long-range temporal dependencies using a Transformer-based bottleneck encoder
-- Applying iterative masking and latent smoothing for robustness
-- Generating grammatically coherent sentences using a neural text decoder
+- Long temporal dependencies  
+- Co-articulation effects  
+- Absence of explicit word boundaries  
 
-The complete pipeline consists of **seven clearly defined stages**, from raw video input to final evaluation.
+This project addresses these challenges by:
+
+- Extracting pose–motion features from video frames  
+- Modelling long-range dependencies using a Transformer bottleneck encoder  
+- Applying iterative masking and latent smoothing  
+- Generating grammatically coherent sentences using a neural text decoder  
+
+The pipeline consists of **seven clearly defined stages**, from raw video input to final evaluation.
 
 ---
 
 ## ✨ Key Features
 
-- Gloss-free **CSL → Text** translation
-- **MediaPipe Holistic** for pose–motion feature extraction
-- **Transformer bottleneck encoder** for temporal compression
-- **Iterative masking** to improve robustness
-- **Conv1D-based smoothing** for latent refinement
-- **T5-based text decoder**
-- Evaluation using standard machine translation metrics
+- Gloss-free **Continuous Sign Language → Text** translation  
+- **MediaPipe Holistic** for pose–motion feature extraction  
+- **Transformer bottleneck encoder** for temporal compression  
+- **Iterative masking** for robustness  
+- **Conv1D-based smoothing** for latent refinement  
+- **T5-based text decoder**  
+- Standard machine translation evaluation metrics  
 
 ---
 
 ## 📁 Project Structure
 
-
+```
 
 csltCode/
 │
-├── src/ # Core model components
-│ ├── model.py # Bottleneck Transformer + smoothing
-│ ├── dataset.py # Dataset loader
-│ └── collate.py # Padding and masking logic
+├── src/                     # Core model components
+│   ├── model.py             # Bottleneck Transformer + smoothing
+│   ├── dataset.py           # Dataset loader
+│   └── collate.py           # Padding and masking logic
 │
-├── scripts/ # Executable pipeline stages
-│ ├── extract_holistic.py # Pose feature extraction
-│ ├── build_manifest.py # Manifest generation
-│ ├── train.py # Model training
-│ ├── eval_all_metrics.py # Evaluation metrics
-│ └── thesis_report.py # Thesis tables and plots
+├── scripts/                 # Executable pipeline stages
+│   ├── extract_holistic.py  # Pose feature extraction
+│   ├── build_manifest.py    # Manifest generation
+│   ├── train.py             # Model training
+│   ├── eval_all_metrics.py  # Evaluation metrics
+│   └── thesis_report.py     # Thesis tables and plots
 │
-├── data/ # (Not included in GitHub)
-│ ├── raw/ # PHOENIX-2014-T dataset
-│ ├── features/ # Extracted pose features (.npy)
-│ └── manifests/ # Train / Dev / Test CSV files
+├── data/                    # (Not included in GitHub)
+│   ├── raw/                 # PHOENIX-2014-T dataset
+│   ├── features/            # Extracted pose features (.npy)
+│   └── manifests/           # Train / Dev / Test CSV files
 │
-├── checkpoints/ # Saved model checkpoints
-├── results/ # Predictions, metrics, visualisations
+├── checkpoints/             # Saved model checkpoints
+├── results/                 # Predictions, metrics, visualisations
 └── README.md
 
+```
 
 ---
 
@@ -63,185 +79,192 @@ csltCode/
 
 This project uses the **PHOENIX-2014-T** dataset for continuous sign language translation.
 
-⚠️ **Note:**  
+⚠️ **Note**  
 Due to size constraints, the dataset, extracted features, checkpoints, and results are **not included** in this repository.
 
-Expected local dataset structure:
+### Expected Local Dataset Structure
 
+```
 
----
-
-## 📦 Dataset
-
-This project uses the **PHOENIX-2014-T** dataset for continuous sign language translation.
-
-⚠️ **Note:**  
-Due to size constraints, the dataset, extracted features, checkpoints, and results are **not included** in this repository.
-
-Expected local dataset structure:
 data/raw/PHOENIX-2014-T/
 
+````
 
 ---
 
 ## 🔄 Pipeline Stages
 
 ### Stage 1 — Input Preprocessing
-- Organises raw video frames
-- Validates alignment between frames and sentence annotations
-- Ensures consistent and valid samples
 
-(Provided by the dataset; no script required)
+- Organises raw video frames  
+- Validates alignment between frames and sentence annotations  
+- Ensures consistent and valid samples  
+
+*(Provided by the dataset — no script required)*
 
 ---
 
 ### Stage 2 — Feature Extraction
-- Applies **MediaPipe Holistic** on each frame
-- Extracts 225-dimensional pose–motion descriptors
-- Produces a temporal feature matrix per sample
 
-Run:
+- Applies **MediaPipe Holistic** on each frame  
+- Extracts **225-dimensional pose–motion features**  
+- Produces a temporal feature matrix per video  
+
+#### Run
+
 ```bash
 python scripts/extract_holistic.py \
   --frames_root data/raw/PHOENIX-2014-T/features/fullFrame-210x260px \
   --out_root data/features \
   --split train
+````
 
+Repeat for `dev` and `test`.
 
-Repeat for dev and test.
+#### Output
 
-Output:
-
+```
 data/features/train/*.npy
 data/features/dev/*.npy
 data/features/test/*.npy
-
+```
 
 Each feature file has shape:
 
-(
-𝑇
-,
-225
-)
-(T,225)
-Stage 3 — Manifest Generation
+```
+(T, 225)
+```
 
-Links extracted features with text annotations
+---
 
-Produces CSV files used by the training pipeline
+### Stage 3 — Manifest Generation
 
-Run:
+* Links extracted features with sentence annotations
+* Produces CSV files used during training
 
+#### Run
+
+```bash
 python scripts/build_manifest.py \
   --corpus_csv data/raw/PHOENIX-2014-T/annotations/manual/PHOENIX-2014-T.train.corpus.csv \
   --features_root data/features/train \
   --out data/manifests/train_manifest.csv
+```
 
+Repeat for `dev` and `test`.
 
-Repeat for dev and test splits.
+---
 
-Stage 4–6 — Model Training
+### Stage 4–6 — Model Training
 
 Includes:
 
-Transformer-based bottleneck encoder
+* Transformer bottleneck encoder
+* Iterative masking of latent tokens
+* Conv1D-based smoothing
+* T5 text decoder
 
-Iterative masking of latent tokens
+#### Training Configuration
 
-Conv1D-based smoothing
+* Batch size: `6`
+* Learning rate: `3e-5`
+* Optimizer: `AdamW`
+* Mask probability: `0.15`
+* Epochs: `20–30+`
 
-T5 text decoder
+#### Run
 
-Training configuration:
-
-Batch size: 6
-
-Learning rate: 3e-5
-
-Optimizer: AdamW
-
-Mask probability: 0.15
-
-Epochs: 20–30+
-
-Run training:
-
+```bash
 python scripts/train.py
+```
 
+#### Outputs
 
-Outputs:
+```
+checkpoints/
+├── epoch_1.pt
+├── epoch_2.pt
+└── ...
+```
 
-checkpoints/epoch_1.pt
-checkpoints/epoch_2.pt
-...
+---
 
-Stage 7 — Evaluation
+### Stage 7 — Evaluation
 
-Generates translations on the test set
+* Generates translations on the test set
+* Computes standard translation metrics
 
-Computes standard translation metrics
+#### Run
 
-Run:
-
+```bash
 python scripts/eval_all_metrics.py
+```
 
+#### Output
 
-Output:
-
+```
 results/results_test_predictions.csv
+```
 
-Optional — Thesis Reports & Visualisation
+---
 
-Generates tables, plots, and summaries for thesis writing
+## 📊 Evaluation Metrics
 
-Run:
+* BLEU
+* chrF
+* METEOR
+* Word Error Rate (WER)
+* Sentence-level Accuracy
 
+---
+
+## 📈 Optional — Thesis Reports & Visualisation
+
+Generates tables, plots, and summaries for thesis writing.
+
+#### Run
+
+```bash
 python scripts/thesis_report.py
+```
 
+#### Outputs
 
-Outputs:
-
+```
 results/plots/
 results/tables/
 results/summary.txt
+```
 
-▶️ End-to-End Execution Order
+---
+
+## ▶️ End-to-End Execution Order
+
 1. Prepare PHOENIX-2014-T dataset
-2. Run extract_holistic.py
-3. Run build_manifest.py
-4. Run train.py
-5. Run eval_all_metrics.py
-6. (Optional) Run thesis_report.py
+2. Run `extract_holistic.py`
+3. Run `build_manifest.py`
+4. Run `train.py`
+5. Run `eval_all_metrics.py`
+6. *(Optional)* Run `thesis_report.py`
 
-📊 Evaluation Metrics
+---
 
-BLEU
+## 🧪 Notes
 
-chrF
+* `data/`, `checkpoints/`, and `results/` are ignored in GitHub
+* Only source code and documentation are version-controlled
+* Designed for academic research and reproducibility
 
-METEOR
+---
 
-Word Error Rate (WER)
-
-Sentence-level Accuracy
-
-These metrics provide complementary insights into lexical overlap, semantic similarity, and word-level alignment.
-
-🧪 Notes
-
-data/, checkpoints/, and results/ are ignored in GitHub
-
-Only source code and documentation are version-controlled
-
-Designed for academic research and reproducibility
-
-📄 License
+## 📄 License
 
 For academic and research use only.
 
-✍️ Author
+---
 
-Shalmon Titre
+## ✍️ Author
+
+**Shalmon Titre**
 Master’s Thesis Project
 Gloss-Free Continuous Sign Language Translation
